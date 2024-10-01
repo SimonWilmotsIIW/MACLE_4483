@@ -6,20 +6,20 @@ import sys
 
 def preprocess(data):
     # X = input, y = target
-    X = data.drop(columns=['medv']).dropna()
+    X = data.drop(columns=['medv'])
     y = data['medv'].dropna().values
     return X, y
 
-def mse(y_true, y_pred):
-    return mean_squared_error(y_true, y_pred)
+def mse_manual(X, reg_result):
+    return np.c_[np.ones((X.shape[0], 1)), X.values].dot(reg_result)
 
 def manual_regression(X, y):
     X_b = np.c_[np.ones((X.shape[0], 1)), X]
-    result = np.linalg.inv(X_b.T.dot(X_b)).dot(X_b.T).dot(y)
-    return result
+    # (XT . X)^−1 . (X⊤) . y
+    w = np.linalg.inv(X_b.T.dot(X_b)).dot(X_b.T).dot(y)
+    return w
 
 def main():
-
     if len(sys.argv) != 3:
         print("Run file as: python assignment1.py <training.csv> <testing.csv>")
         sys.exit(1)
@@ -34,24 +34,24 @@ def main():
 
     MODEL.fit(X_train, y_train)
     
-    # y_train_pred = MODEL.predict(X_train)
-    # y_test_pred = MODEL.predict(X_test)
+    y_train_pred = MODEL.predict(X_train)
+    y_test_pred = MODEL.predict(X_test)
 
-    # train_mse = mse(y_train, y_train_pred)
-    # test_mse = mse(y_test, y_test_pred)
+    train_mse = mean_squared_error(y_train, y_train_pred)
+    test_mse = mean_squared_error(y_test, y_test_pred)
 
-    # print(f'Train MSE (scikit): {train_mse}')
-    # print(f'Test MSE (scikit): {test_mse}')
+    print(f'scikit MSE train: {train_mse}')
+    print(f'scikit MSE test: {test_mse}')
 
-    # theta_best = manual_regression(X_train.values, y_train)
-    # y_train_pred_manual = np.c_[np.ones((X_train.shape[0], 1)), X_train.values].dot(theta_best)
-    # y_test_pred_manual = np.c_[np.ones((X_test.shape[0], 1)), X_test.values].dot(theta_best)
+    regression_result = manual_regression(X_train.values, y_train)
+    y_train_pred_manual = mse_manual(X_train, regression_result)
+    y_test_pred_manual = mse_manual(X_test, regression_result)
 
-    # train_mse_manual = mse(y_train, y_train_pred_manual)
-    # test_mse_manual = mse(y_test, y_test_pred_manual)
+    train_mse_manual = mean_squared_error(y_train, y_train_pred_manual)
+    test_mse_manual = mean_squared_error(y_test, y_test_pred_manual)
 
-    # print(f'Train MSE (manual): {train_mse_manual}')
-    # print(f'Test MSE (manual): {test_mse_manual}')
+    print(f'Simon MSE train: {train_mse_manual}')
+    print(f'Simon MSE test: {test_mse_manual}')
 
 if __name__ == "__main__":
     main()

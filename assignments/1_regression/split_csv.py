@@ -10,7 +10,7 @@ if __name__ == "__main__":
     TRAIN_RATION = 0.8
     input_csv = sys.argv[1]
     
-    data = pd.read_csv(input_csv)
+    data = pd.read_csv(input_csv).dropna()
 
     train_size = int(len(data) * TRAIN_RATION)
     
