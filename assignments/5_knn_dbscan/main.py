@@ -94,7 +94,7 @@ if __name__ == "__main__":
     axes[0].scatter(X[:, 0], X[:, 1], c=kmeans_labels, cmap='Accent', s=20)
     axes[0].set_title("KMeans")
     
-    axes[1].scatter(X[:, 0], X[:, 1], c=dbscan_labels, cmap='Accent', s=30)
+    axes[1].scatter(X[:, 0], X[:, 1], c=dbscan_labels, cmap='Accent', s=20)
     axes[1].set_title("DBSCAN")
     
     plt.show()
